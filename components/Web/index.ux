@@ -1,0 +1,106 @@
+<import name="error" src="../_common/comps/error"></import>
+<import name="loading" src="../_common/comps/loading"></import>
+
+<template>
+  <stack class="qapp-webstack">
+    <web
+      if="{{!isError}}"
+      id="web"
+      class="qapp-web"
+      src="{{url}}"
+      trustedurl="{{trustedUrl}}"
+      @pagestart="onPagestart"
+      @pagefinish="onPagefinish"
+      @titlereceive="onTitlereceive"
+      @error="onError"
+      @message="onMessage"
+    ></web>
+    <block if="{{isLoading}}">
+      <slot name="loading">
+        <loading loadinginfo="{{loadinginfo || {} }}"></loading>
+      </slot>
+    </block>
+    <block if="{{isError}}">
+      <slot name="error">
+        <error @retry="retry" errorinfo="{{errorinfo || {} }}"></error>
+      </slot>
+    </block>
+  </stack>
+</template>
+
+<script>
+import JsBridge from "./jsbridge";
+
+export default {
+  props: ["url", "loadinginfo", "errorinfo"],
+  data: {
+    isLoading: true,
+    isError: false
+  },
+  computed: {
+    trustedUrl() {
+      return JsBridge.getTrustedUrl(this.url);
+    }
+  },
+  retry() {
+    this.isLoading = true;
+    this.isError = false;
+  },
+  onReady() {
+    this.webEl = this.$element("web");
+    this.JsBridge = new JsBridge(this.webEl, (message, url) => {
+      this.$emit("message", { message, url });
+    });
+  },
+  onPagestart(e) {
+    this.$emit("pagestart", e);
+  },
+  onPagefinish(e) {
+    this.$emit("pagefinish", e);
+  },
+  onTitlereceive(e) {
+    if (this.isLoading) {
+      this.isLoading = false;
+      // fix web组件的error事件触发有问题，该用获取title方式来判断网页是否加载失败
+      if (e.title === "网页无法打开") {
+        this.isError = true;
+      } else {
+        this.isError = false;
+        this.$emit("titlereceive", e);
+      }
+    }
+  },
+  onError(e) {
+    this.$emit("error", e);
+  },
+  onMessage(e) {
+    this.JsBridge.onMessage(e);
+  },
+  postMessage(message) {
+    this.JsBridge.postMessage(message);
+  },
+  forward() {
+    this.webEl.forward();
+  },
+  back() {
+    this.webEl.back();
+  },
+  canForward(params) {
+    this.webEl.canForward(params);
+  },
+  canBack(params) {
+    this.webEl.canBack(params);
+  }
+};
+</script>
+
+<style>
+.qapp-webstack {
+  flex: 1;
+  flex-direction: column;
+}
+.qapp-web {
+  flex: 1;
+  height: 0;
+}
+</style>

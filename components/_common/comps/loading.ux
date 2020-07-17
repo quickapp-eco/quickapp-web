@@ -1,0 +1,56 @@
+<template>
+  <div class="qapp-loading">
+    <image class="qapp-loadingicon" src="{{loadinginfo.icon || icon}}" />
+    <text class="qapp-loadingtxt font-regular">
+      {{
+      loadinginfo.txt || "加载中..."
+      }}
+    </text>
+  </div>
+</template>
+
+<style>
+.font-regular {
+  font-family: mipro-regular;
+}
+.qapp-loading {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+.qapp-loadingicon {
+  margin-top: 666px;
+  height: 55px;
+  object-fit: contain;
+  margin-bottom: 38px;
+  animation-name: rotate;
+  animation-duration: 800ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+.qapp-loadingtxt {
+  font-size: 46px;
+  color: #787878;
+  text-align: center;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
+
+<script>
+import { loadingIcon } from "../images.js";
+
+export default {
+  props: ["loadinginfo"],
+  data: {
+    icon: loadingIcon
+  }
+};
+</script>

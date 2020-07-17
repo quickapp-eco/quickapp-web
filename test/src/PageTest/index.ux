@@ -1,0 +1,81 @@
+<import name="page" src="../../../components/Page"></import>
+
+<template>
+  <page
+    id="page"
+    @retry="retry"
+    is-error="{{isError}}"
+    is-loading="{{isLoading}}"
+    loadinginfo="{{loadinginfo}}"
+    errorinfo="{{errorinfo}}"
+  >
+    <!-- <text slot="loading" class="loading-txt">加载中...</text> -->
+    <!-- <text slot="error" class="error-button" @click="retry"
+      >加载失败！请刷新</text
+    >-->
+    <div slot="content" class="content">
+      <text>page 测试</text>
+    </div>
+  </page>
+</template>
+
+<script>
+export default {
+  private: {
+    loadinginfo: {
+      txt: "正在加载中!!!"
+    },
+    errorinfo: {
+      neterror: "当前没有网络!!!",
+      dataerror: "数据加载失败!!!",
+      btnstyle: {
+        color: "#09ba07",
+        borderColor: "#09ba07"
+      }
+    },
+    isError: false,
+    isLoading: true
+  },
+  onReady() {
+    this.error();
+  },
+  retry() {
+    this.loading();
+    setTimeout(() => {
+      this.success();
+    }, 1000);
+  },
+  loading() {
+    this.isLoading = true;
+    this.isError = false;
+  },
+  success() {
+    this.isLoading = false;
+    this.isError = false;
+  },
+  error() {
+    this.isLoading = false;
+    this.isError = true;
+  }
+};
+</script>
+
+<style>
+.loading-txt {
+  margin-top: 400px;
+  text-align: center;
+}
+.error-button {
+  margin-top: 400px;
+  text-align: center;
+}
+.content {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+text {
+  font-size: 50px;
+}
+</style>

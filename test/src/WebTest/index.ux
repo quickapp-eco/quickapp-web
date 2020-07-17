@@ -1,0 +1,81 @@
+<import name="cweb" src="../../../components/Web"></import>
+
+<template>
+  <cweb
+    id="web"
+    url="{{webSrc}}"
+    @pagestart="pagestart"
+    @pagefinish="pagefinish"
+    @error="error"
+    @message="message"
+    @titlereceive="titlereceive"
+  >
+    <text slot="loading" class="loading-txt">加载中...</text>
+    <text slot="error" class="error-button" @click="retry"
+      >加载失败！请刷新</text
+    >
+  </cweb>
+</template>
+
+<script>
+import router from "@system.router";
+
+export default {
+  data: {
+    webSrc: "https://www.baidu.com"
+  },
+  retry() {
+    const webVm = this.$child("web");
+    webVm.retry();
+  },
+  pagestart(e) {
+    console.log("pagestart e.detail:", e.detail);
+  },
+  pagefinish(e) {
+    console.log("pagefinish e.detail:", e.detail);
+  },
+  message(e) {
+    console.log("message e.detail:", e.detail);
+  },
+  error(e) {
+    console.log("error e.detail:", e.detail);
+  },
+  titlereceive(e) {
+    console.log("titlereceive e.detail:", e.detail);
+  },
+  onBackPress() {
+    const webVm = this.$child("web");
+    if (!webVm || webVm.isError) return false;
+
+    webVm.canBack({
+      callback: e => {
+        if (e) {
+          webEl.back();
+        } else {
+          router.back();
+        }
+      }
+    });
+    return true;
+  }
+};
+</script>
+
+<style>
+.loading-txt {
+  margin-top: 50px;
+  font-size: 46px;
+  color: #787878;
+  text-align: center;
+}
+
+.error-button {
+  margin-top: 80px;
+  width: 300px;
+  height: 100px;
+  text-align: center;
+  font-size: 46px;
+  border: 3px solid #ed712e;
+  border-radius: 70px;
+}
+</style>

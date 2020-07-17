@@ -1,0 +1,38 @@
+<import name="error" src="../_common/comps/error"></import>
+<import name="loading" src="../_common/comps/loading"></import>
+
+<template>
+  <div class="qapp-page">
+    <block if="{{isError}}">
+      <slot name="error">
+        <error @retry="retry" errorinfo="{{errorinfo || {} }}"></error>
+      </slot>
+    </block>
+    <block if="{{isLoading}}">
+      <slot name="loading">
+        <loading loadinginfo="{{loadinginfo || {} }}"></loading>
+      </slot>
+    </block>
+    <div class="qapp-content" show="{{!isLoading && !isError}}">
+      <slot name="content"></slot>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ["isError", "isLoading", "loadinginfo", "errorinfo"],
+  retry() {
+    this.loading();
+    this.$emit("retry");
+  }
+};
+</script>
+
+<style>
+.qapp-page,
+.qapp-content {
+  flex: 1;
+  flex-direction: column;
+}
+</style>

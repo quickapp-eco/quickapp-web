@@ -1,0 +1,46 @@
+{
+  "name": "@quickapp-eco/quickapp-web",
+  "version": "0.1.0",
+  "description": "快应用常用业务组件封装",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint components --ext .js --cache --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quickapp-eco/quickapp-web.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "keywords": [
+    "快应用",
+    "组件库"
+  ],
+  "author": "shenzhim <szmalq@163.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.7",
+    "hap-toolkit": "^0.6.10"
+  },
+  "bugs": {
+    "url": "https://github.com/quickapp-eco/quickapp-web/issues"
+  },
+  "homepage": "https://github.com/quickapp-eco/quickapp-web#readme",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  }
+}

@@ -1,0 +1,102 @@
+<template>
+  <div class="qapp-error">
+    <image class="qapp-errorimg" src="{{errorBg}}" />
+    <text if="netError" class="qapp-errormsg font-regular">
+      {{
+      errorinfo.neterror || "Sorry～网络貌似开小差了哦～"
+      }}
+    </text>
+    <text else class="qapp-errormsg font-regular">
+      {{
+      errorinfo.dataerror || "加载失败，请点击重试"
+      }}
+    </text>
+    <text class="qapp-errorbtn font-regular" style="{{errorinfo.btnstyle}}" @click="retryHandler">刷新</text>
+  </div>
+</template>
+
+<style>
+.font-regular {
+  font-family: mipro-regular;
+}
+.qapp-error {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+.qapp-errorimg {
+  width: 500px;
+  height: 250px;
+  margin-top: 517px;
+  object-fit: contain;
+}
+.qapp-errormsg {
+  font-size: 46px;
+  color: #000000;
+  opacity: 0.5;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+.qapp-errorbtn {
+  margin-top: 80px;
+  width: 300px;
+  height: 100px;
+  color: #ed712e;
+  text-align: center;
+  font-size: 46px;
+  border: 3px solid #ed712e;
+  border-radius: 70px;
+}
+</style>
+
+<script>
+import { errorBg } from "../images.js";
+import prompt from "@system.prompt";
+import network from "@system.network";
+
+let errorTimer;
+export default {
+  props: ["errorinfo"],
+  data: {
+    netError: false,
+    errorBg
+  },
+  async getNetworkType() {
+    const res = await network.getType();
+    return res.data.type;
+  },
+  async onInit() {
+    const type = await this.getNetworkType();
+    if (type === "none") {
+      // 无网络
+      this.netError = true;
+      // 监听网络变化
+      errorTimer = setInterval(async () => {
+        const curType = await this.getNetworkType();
+        if (curType !== "none") {
+          clearInterval(errorTimer);
+          this.retry();
+        }
+      }, 2000);
+    }
+  },
+  async retryHandler() {
+    if (this.netError) {
+      const curType = await this.getNetworkType();
+      if (curType !== "none") {
+        if (errorTimer) clearInterval(errorTimer);
+        this.retry();
+      } else {
+        prompt.showToast({ message: "网络异常，请稍后重试" });
+      }
+    } else {
+      this.retry();
+    }
+  },
+  retry() {
+    this.netError = false;
+    this.$emit("retry");
+  }
+};
+</script>

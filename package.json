@@ -1,7 +1,7 @@
 {
   "name": "@quickapp-eco/quickapp-web",
-  "version": "0.1.0",
-  "description": "快应用常用业务组件封装",
+  "version": "0.1.1",
+  "description": "快应用web增强(支持加载动画，加载失败提示，失败重新加载和h5页面通信等功能)",
   "main": "index.js",
   "scripts": {
     "lint": "eslint components --ext .js --cache --fix"
